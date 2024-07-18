@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { ADD_STAR, GET_STARS, REMOVE_STAR, starInput } from './Mutation';
+import { useMeasureTime } from '../utils';
 
 export default function OptimisticMutation() {
   const { loading, data } = useQuery(GET_STARS, {
@@ -9,6 +10,7 @@ export default function OptimisticMutation() {
     }
   });
   const stars = data?.repository?.stargazerCount
+  const { timePassed, startMeasuringTime } = useMeasureTime({ variableToChange: stars })
 
   const [addStar] = useMutation(ADD_STAR, {
     optimisticResponse: {
@@ -40,9 +42,18 @@ export default function OptimisticMutation() {
     <>
       <h1>Optimistic Mutation</h1>
       <p>Apollo Stars: {stars}</p>
+      <p>Time Update to star change: {timePassed?.toFixed(0)} ms</p>
       <div className="card">
-        <button onClick={() => addStar(starInput)}>Add Star</button>
-        <button onClick={() => removeStar(starInput)}>Remove Star</button>
+        <button
+          onClick={() => {
+            startMeasuringTime(performance.now())
+            addStar(starInput);
+          }}>Add Star</button>
+        <button
+          onClick={() => {
+            startMeasuringTime(performance.now())
+            removeStar(starInput);
+          }}>Remove Star</button>
       </div >
     </>
   )

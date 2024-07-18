@@ -1,4 +1,5 @@
 import { gql, useMutation, useQuery } from '@apollo/client';
+import { useMeasureTime } from '../utils';
 
 export const starInput = {
   variables: {
@@ -50,7 +51,7 @@ export default function Mutation() {
     }
   });
   const stars = data?.repository?.stargazerCount
-
+  const { timePassed, startMeasuringTime } = useMeasureTime({ variableToChange: stars })
   const [addStar] = useMutation(ADD_STAR);
   const [removeStar] = useMutation(REMOVE_STAR);
 
@@ -60,9 +61,18 @@ export default function Mutation() {
     <>
       <h1>Mutation</h1>
       <p>Apollo Stars: {stars}</p>
+      <p>Time Update to star change: {timePassed?.toFixed(0)} ms</p>
       <div className="card">
-        <button onClick={() => addStar(starInput)}>Add Star</button>
-        <button onClick={() => removeStar(starInput)}>Remove Star</button>
+        <button
+          onClick={() => {
+            startMeasuringTime(performance.now())
+            addStar(starInput);
+          }}>Add Star</button>
+        <button
+          onClick={() => {
+            startMeasuringTime(performance.now())
+            removeStar(starInput);
+          }}>Remove Star</button>
       </div >
     </>
   )
