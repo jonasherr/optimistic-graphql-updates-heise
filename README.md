@@ -5,5 +5,5 @@
 <br>Save the token like this to .env 
 `VITE_GITHUB_TOKEN=YOUR_TOKEN`
 3. run `npm install`
-4. run `npm run develop`
+4. run `npm run dev`
 5. Open the project at the localhost URL provided in your terminal
